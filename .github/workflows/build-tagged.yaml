@@ -12,9 +12,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
       - name: Tag the release
+        shell: bash
         run: |
-          echo "Creating ghcr.io/gmr/erlang-elixir:$(basename ${GITHUB_REF})"
+          export TAG=`basename ${GITHUB_REF}`
+          echo "Creating ghcr.io/gmr/erlang-elixir:${TAG}"
           echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u gmr --password-stdin
           docker pull ghcr.io/gmr/erlang-elixir:${GITHUB_SHA:0:7}
-          docker tag ghcr.io/gmr/erlang-elixir:${GITHUB_SHA:0:7} ghcr.io/gmr/erlang-elixir:$(basename ${GITHUB_REF})
-          docker push ghcr.io/gmr/erlang-elixir:${GITHUB_REF}
+          docker tag ghcr.io/gmr/erlang-elixir:${GITHUB_SHA:0:7} ghcr.io/gmr/erlang-elixir:${TAG}
+          docker push ghcr.io/gmr/erlang-elixir:${TAG}
