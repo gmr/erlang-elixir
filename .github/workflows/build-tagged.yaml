@@ -12,7 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
       - name: Tag the release
-        shell: bash
         run: |
           export TAG=`basename ${GITHUB_REF}`
           echo "Creating ghcr.io/gmr/erlang-elixir:${TAG}"
