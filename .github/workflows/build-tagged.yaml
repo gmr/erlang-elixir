@@ -1,0 +1,19 @@
+name: Build Tagged
+on:
+  push:
+    branches-ignore: ["*"]
+    tags: ["*"]
+jobs:
+  deploy-tag:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && github.repository == 'gmr/erlang-elixir'
+    container: docker:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Tag the release
+        run: |
+          echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u gmr --password-stdin
+          docker pull ghcr.io/gmr/erlang-elixir:${GITHUB_SHA:0:7} .
+          docker tag ghcr.io/gmr/erlang-elixir:${GITHUB_SHA:0:7} ghcr.io/gmr/erlang-elixir:${GITHUB_REF}
+          docker push ghcr.io/gmr/erlang-elixir:${GITHUB_REF}
